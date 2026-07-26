@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Alerts Execution"
+  short_description: "Send or skip alerts from running automations"
+  default_prompt: "Use $agent-alerts-execution to send or skip an Agent Alerts update through its configured local MCP, HTTPS webhook, or legacy CLI route."

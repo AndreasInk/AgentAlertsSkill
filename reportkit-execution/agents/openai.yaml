@@ -1,4 +1,0 @@
-interface:
-  display_name: "ReportKit Execution"
-  short_description: "Send ReportKit updates from running automations"
-  default_prompt: "Use $reportkit-execution to send or skip a ReportKit Live Activity, widget, notification, or control update from an existing automation; prefer reportkit_send when the local MCP helper is available."

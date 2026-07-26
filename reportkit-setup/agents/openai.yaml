@@ -1,4 +1,0 @@
-interface:
-  display_name: "ReportKit Setup"
-  short_description: "Set up MCP-first automations that send ReportKit updates"
-  default_prompt: "Use $reportkit-setup to design a ReportKit automation for Live Activity, widget, notification, or control surfaces; prefer the macOS MCP helper for local AI apps and hand off safe runtime send instructions."
