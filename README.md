@@ -1,27 +1,25 @@
 # Agent Alerts Agent Skills
 
-Public agent skills for setting up, running, and self-hosting Agent Alerts.
+Public agent skills for setting up and running Agent Alerts.
 
 Use the Agent Alerts namespace in public configuration: `agentalerts_send` and
-`AGENTALERTS_AGENT_TOKEN`. Always use the exact webhook URL supplied by Agent
-Alerts; hosted compatibility endpoints may retain a legacy function name.
+`AGENTALERTS_AGENT_TOKEN`. Start new setups at
+[`https://www.andreas.ink/agent`](https://www.andreas.ink/agent).
 
-This repo contains three skills:
+This repo currently publishes two skills:
 
 - `$agent-alerts-setup`: design an automation and choose its delivery route.
 - `$agent-alerts-execution`: evaluate an existing automation and send or skip
   an alert safely.
-- `$agent-alerts-webhook-self-host`: deploy the Agent Alerts webhook stack to a
-  dedicated Supabase project through Supabase MCP.
 
 ## Delivery Routes
 
 Use the HTTPS webhook by default for local or hosted Codex, Claude Code,
 Cursor, CI, no-code tools, and other runtimes that can make an outbound HTTPS
-request. Create a revocable agent token in **Settings → Webhooks & Agents** on
-iPhone, store the supplied endpoint as `AGENTALERTS_WEBHOOK_URL`, store the
-token only in that runtime's secret manager, and send it as the Bearer
-credential.
+request. Begin at `https://www.andreas.ink/agent`, complete its connection flow
+with Agent Alerts on iPhone, and store the publish token directly in the
+runtime's secret manager as `AGENTALERTS_AGENT_TOKEN`. Do not paste it into
+agent chat. The bundled helper uses the hosted endpoint by default.
 
 Use the local macOS MCP helper only when the user explicitly wants a
 desktop-local integration:
@@ -36,8 +34,8 @@ desktop-local integration:
 The legacy `agentalerts` CLI remains an optional compatibility fallback.
 
 Before scheduling Codex or Claude Code, authorize only the exact bundled
-`agent-alerts-execution/scripts/send_webhook.sh` command, inject the endpoint
-and token through the runner environment, allow outbound HTTPS to that endpoint,
+`agent-alerts-execution/scripts/send_webhook.sh` command, inject the token
+through the runner environment, allow outbound HTTPS to the hosted endpoint,
 and complete one interactive smoke test. Do not broadly allow Bash or disable
 the runner's permission system.
 
@@ -63,23 +61,15 @@ Ask an agent to install this skill repo:
 Install https://github.com/AndreasInk/AgentAlertsSkill.git so I can set up Agent Alerts automations.
 Use $agent-alerts-setup to design or install an automation.
 Use $agent-alerts-execution inside the automation when it is time to send or skip.
-Use $agent-alerts-webhook-self-host only when I explicitly want to deploy the webhook stack to my own Supabase project.
 ```
 
 Use `$agent-alerts-setup` for a report, monitor, schedule, CI check, or agent
-workflow. Include `$agent-alerts-execution` in the runtime prompt. The
-self-hosting skill is separate because it deploys infrastructure and needs a
-scoped, approved Supabase MCP connection.
+workflow. Include `$agent-alerts-execution` in the runtime prompt.
 
 ## Repo Contents
 
 - `agent-alerts-setup/SKILL.md`
 - `agent-alerts-execution/SKILL.md`
-- `agent-alerts-webhook-self-host/SKILL.md`
-- `agent-alerts-webhook-self-host/assets/supabase/` — self-contained webhook,
-  agent-token, and schema bundle for a dedicated Supabase project
-- `agent-alerts-webhook-self-host/references/schema.md` — table ownership, RLS,
-  token-registration, and delivery-receipt reference
 - `assets/live-activity-previews/`
 
 ## More Info

@@ -8,6 +8,23 @@ description: Set up a user-facing automation that sends Agent Alerts iPhone Live
 Design the automation and hand it to `$agent-alerts-execution` for runtime.
 Do not send during setup unless the user explicitly asks for a smoke test.
 
+## Start At The Public Setup Page
+
+For a new setup, open or direct the user to:
+
+```text
+https://www.andreas.ink/agent
+```
+
+Treat the page's agent instructions and generated setup details as the current
+hosted contract. If the user pastes `/agent`, `/agent/`, `/agent-alerts`, or an
+Agent Alerts setup link, follow its advertised agent-instructions URL instead
+of answering only from the local skill.
+
+The public page connects the web flow with Agent Alerts on iPhone and guides
+the user through creating a publish-only token. Do not reduce setup to “open
+the iPhone app and paste a token here.”
+
 ## Name And Compatibility Policy
 
 Use **Agent Alerts** in user-facing copy and configuration. Use these
@@ -53,21 +70,25 @@ network port, schedule work, or read the Mac app's normal Supabase session.
 
 ## HTTPS Webhook Setup
 
-1. Sign into Agent Alerts on iPhone, allow notifications, and let it finish
-   syncing device and Live Activity tokens.
-2. In **Settings → Webhooks & Agents**, create a named publish token for the
-   specific runtime. Copy or share the generated endpoint and setup details.
-3. Store the displayed token as `AGENTALERTS_AGENT_TOKEN` in that runtime's
-   secret manager. The plaintext token is shown once. The bundled helper
-   defaults to the hosted endpoint; store the supplied endpoint as
-   `AGENTALERTS_WEBHOOK_URL` only for a self-hosted or alternate project.
-4. Allow only outbound HTTPS to the supplied endpoint. Do not put the token in a
+1. Start at `https://www.andreas.ink/agent` and follow the page's connection
+   flow with Agent Alerts on iPhone.
+2. Create a named publish token for the specific runtime when the page/app
+   prompts for it.
+3. Have the user place the displayed token directly into the runtime's secret
+   or environment configuration as `AGENTALERTS_AGENT_TOKEN`. Never ask the
+   user to paste the token into AI chat. Do not create a plaintext token file
+   such as `~/.config/agent-alerts/token.env` unless the user explicitly asks
+   for that storage design.
+4. The bundled helper defaults to the hosted Agent Alerts endpoint. Set
+   `AGENTALERTS_WEBHOOK_URL` only when the app or public setup page supplies a
+   different endpoint.
+5. Allow only outbound HTTPS to the supplied endpoint. Do not put the token in a
    URL, query string, prompt, source file, log, or shell history.
-5. Run one compact idempotent smoke test and verify the returned delivery status.
+6. Run one compact idempotent smoke test and verify the returned delivery status.
 
-Use the exact HTTPS endpoint supplied by Agent Alerts. Do not derive a function
-path or replace a legacy hosted function name. Self-hosted deployments use the
-endpoint returned by `$agent-alerts-webhook-self-host`.
+Use the hosted endpoint advertised by the public setup page or the exact
+different HTTPS endpoint supplied by Agent Alerts. Do not derive a function
+path or replace a hosted function name.
 
 The webhook accepts `POST` JSON only. It requires:
 
@@ -112,8 +133,9 @@ Before scheduling a Codex or Claude Code automation:
 3. Make the skill folder readable/executable and the automation payload
    location writable inside the runner sandbox.
 4. Inject `AGENTALERTS_AGENT_TOKEN` through the runner's secret/environment
-   configuration. Inject `AGENTALERTS_WEBHOOK_URL` only when overriding the
-   hosted default. Never store the token in a tracked settings file.
+   configuration. Inject `AGENTALERTS_WEBHOOK_URL` only when the setup flow
+   supplied a different endpoint. Never store the token in a tracked settings
+   file.
 5. Allow outbound HTTPS only to the configured webhook host.
 6. Run one interactive smoke test through the exact automation command before
    enabling its schedule. Confirm the response fields without claiming visible
@@ -148,11 +170,11 @@ widgets, Control Widget state, builder layouts, or other advanced fields.
 - Create one revocable token per runtime; rotate or revoke any token that appears
   in a log, prompt, commit, or shared transcript.
 - Do not copy local CLI sessions into a cloud runtime.
+- Do not ask the user to paste a token into chat.
+- Do not invent a default plaintext token file or claim it is a secret manager.
 - Do not print, echo, or inline `AGENTALERTS_AGENT_TOKEN`.
 - Do not put passwords, Supabase keys, APNs credentials, or token plaintext in
   commands or automation instructions.
-- Use `$agent-alerts-webhook-self-host` only when the user explicitly requests a
-  dedicated Supabase deployment; it is not needed for the hosted endpoint.
 
 ## Design The Alert Contract
 
