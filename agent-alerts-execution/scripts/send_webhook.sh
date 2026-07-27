@@ -68,12 +68,10 @@ if ! printf '%s' "$AGENTALERTS_AGENT_TOKEN" |
   exit 78
 fi
 
-if [ -z "${AGENTALERTS_WEBHOOK_URL:-}" ]; then
-  printf '%s\n' "AGENTALERTS_WEBHOOK_URL is unavailable." >&2
-  exit 78
-fi
+default_webhook_url="https://bsakakesupfudupbxflj.supabase.co/functions/v1/agentalerts-webhook"
+webhook_url=${AGENTALERTS_WEBHOOK_URL:-$default_webhook_url}
 
-case "$AGENTALERTS_WEBHOOK_URL" in
+case "$webhook_url" in
   https://*[\?\#]*)
     printf '%s\n' "AGENTALERTS_WEBHOOK_URL must not contain a query or fragment." >&2
     exit 78
@@ -102,4 +100,4 @@ printf 'header = "Authorization: Bearer %s"\nheader = "Content-Type: application
     --retry-connrefused \
     --request POST \
     --data-binary "@$payload_file" \
-    "$AGENTALERTS_WEBHOOK_URL"
+    "$webhook_url"

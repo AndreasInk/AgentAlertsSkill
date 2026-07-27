@@ -57,9 +57,10 @@ network port, schedule work, or read the Mac app's normal Supabase session.
    syncing device and Live Activity tokens.
 2. In **Settings → Webhooks & Agents**, create a named publish token for the
    specific runtime. Copy or share the generated endpoint and setup details.
-3. Store the endpoint as `AGENTALERTS_WEBHOOK_URL` and the displayed token as
-   `AGENTALERTS_AGENT_TOKEN` in that runtime's secret manager. The plaintext
-   token is shown once.
+3. Store the displayed token as `AGENTALERTS_AGENT_TOKEN` in that runtime's
+   secret manager. The plaintext token is shown once. The bundled helper
+   defaults to the hosted endpoint; store the supplied endpoint as
+   `AGENTALERTS_WEBHOOK_URL` only for a self-hosted or alternate project.
 4. Allow only outbound HTTPS to the supplied endpoint. Do not put the token in a
    URL, query string, prompt, source file, log, or shell history.
 5. Run one compact idempotent smoke test and verify the returned delivery status.
@@ -110,9 +111,9 @@ Before scheduling a Codex or Claude Code automation:
    `Bash`, `sh`, `/usr/bin/curl`, or unrestricted shell execution.
 3. Make the skill folder readable/executable and the automation payload
    location writable inside the runner sandbox.
-4. Inject `AGENTALERTS_WEBHOOK_URL` and `AGENTALERTS_AGENT_TOKEN` through the
-   runner's secret/environment configuration. Never store the token in a
-   tracked settings file.
+4. Inject `AGENTALERTS_AGENT_TOKEN` through the runner's secret/environment
+   configuration. Inject `AGENTALERTS_WEBHOOK_URL` only when overriding the
+   hosted default. Never store the token in a tracked settings file.
 5. Allow outbound HTTPS only to the configured webhook host.
 6. Run one interactive smoke test through the exact automation command before
    enabling its schedule. Confirm the response fields without claiming visible

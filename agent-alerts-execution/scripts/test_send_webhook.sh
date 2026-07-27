@@ -34,6 +34,6 @@ expect_failure 65 "$sender" --check "$fixture_dir/mixed-mode.json"
 jq '.status = "unknown"' "$example" >"$fixture_dir/invalid-status.json"
 expect_failure 65 "$sender" --check "$fixture_dir/invalid-status.json"
 
-expect_failure 78 "$sender" "$example"
+expect_failure 78 env -u AGENTALERTS_AGENT_TOKEN "$sender" "$example"
 
 printf '%s\n' "Agent Alerts webhook helper checks passed."
