@@ -43,6 +43,10 @@ smoke command from the real automation context: neither may show a manual
 approval prompt. Do not broadly allow Bash or disable the runner's permission
 system.
 
+Use a durable scheduler for future or recurring work. A session-only Claude
+Code cron is not complete setup unless the user explicitly wants an ephemeral
+reminder that stops when the session closes.
+
 ## Live Activity Examples
 
 | Ops Calm | Release Readiness | Mixpanel Funnel |

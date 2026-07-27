@@ -34,6 +34,21 @@ expect_failure 65 "$sender" --check "$fixture_dir/mixed-mode.json"
 jq '.status = "unknown"' "$example" >"$fixture_dir/invalid-status.json"
 expect_failure 65 "$sender" --check "$fixture_dir/invalid-status.json"
 
-expect_failure 78 env -u AGENTALERTS_AGENT_TOKEN "$sender" "$example"
+empty_home="$fixture_dir/empty-home"
+mkdir -p "$empty_home"
+expect_failure 78 env -u AGENTALERTS_AGENT_TOKEN HOME="$empty_home" \
+  "$sender" --check-config "$example"
+
+token_home="$fixture_dir/token-home"
+mkdir -p "$token_home/.config/agent-alerts"
+token_file="$token_home/.config/agent-alerts/token.env"
+printf '%s\n' 'AGENTALERTS_AGENT_TOKEN=rk_agent_test_secret' >"$token_file"
+chmod 600 "$token_file"
+env -u AGENTALERTS_AGENT_TOKEN HOME="$token_home" \
+  "$sender" --check-config "$example" >/dev/null
+
+chmod 644 "$token_file"
+expect_failure 78 env -u AGENTALERTS_AGENT_TOKEN HOME="$token_home" \
+  "$sender" --check-config "$example"
 
 printf '%s\n' "Agent Alerts webhook helper checks passed."

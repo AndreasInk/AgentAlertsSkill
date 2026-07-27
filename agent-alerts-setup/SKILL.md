@@ -155,6 +155,25 @@ For Claude Code, add a narrow permission rule through `/permissions`,
 Bash(/absolute/path/to/agent-alerts-execution/scripts/send_webhook.sh:*)
 ```
 
+Prefer `/permissions`. If editing `.claude/settings.local.json`, merge one
+resolved helper rule into the existing valid JSON; do not overwrite other
+settings, duplicate entries, or guess the skill path:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.andreas.ink)",
+      "Bash(/absolute/resolved/path/agent-alerts-execution/scripts/send_webhook.sh:*)"
+    ]
+  }
+}
+```
+
+Do not add a `Read` rule for `~/.config/agent-alerts`. The helper reads the
+designated token file itself, so Claude does not need direct read access to the
+secret directory. Validate the edited settings as JSON before continuing.
+
 Do not use `Bash` without a specifier or
 `--dangerously-skip-permissions`. Environment-level network and filesystem
 policies still need to permit the helper.
@@ -172,16 +191,20 @@ script alone.
 From the same workspace, sandbox, and permission context the automation will
 use:
 
-1. Run the exact absolute helper path with `--check` and the automation's real
-   payload path.
-2. If the runner asks for shell, file, or command approval, add the narrow
+1. Create the JSON payload with the runner's file-write tool as a separate
+   action. Do not use a Bash heredoc, `cat >`, shell redirection, or a compound
+   command that also invokes the helper.
+2. Run one standalone command using the exact absolute helper path with
+   `--check-config` and the automation's real payload path.
+3. If the runner asks for shell, file, or command approval, add the narrow
    persistent rule described above and run the same command again.
-3. The second run must finish with `Agent Alerts payload is valid.` without any
-   prompt, click, confirmation, or temporary permission.
-4. Run the real idempotent smoke send through the same absolute helper path.
+4. The second run must finish with
+   `Agent Alerts payload and configuration are valid.` without any prompt,
+   click, confirmation, or temporary permission.
+5. Run the real idempotent smoke send through the same absolute helper path.
    After any one-time network approval is made persistent, repeat it with the
    same idempotency key. The repeated command must complete without a prompt.
-5. Only then enable or save the schedule.
+6. Only then enable or save the schedule.
 
 Record these non-secret readiness results:
 
@@ -196,6 +219,28 @@ webhook_egress_allowed=true
 Any false or unverified result blocks scheduling and must return
 `AGENTALERTS_SCRIPT_NOT_AUTHORIZED`. An unattended automation must never depend
 on a future approval dialog.
+
+## Scheduler Durability Gate
+
+Agent Alerts delivers updates; it does not keep Claude Code or Codex alive.
+Unless the user explicitly requests a session-only reminder, do not use a
+session cron, an in-chat timer, a sleeping shell, or any schedule that requires
+the current AI session to remain open or idle.
+
+For a recurring or future run, select a durable scheduler appropriate to the
+environment: a Codex automation, launchd, system cron, CI, or another runner
+that remains registered after the AI session closes. Setup is incomplete until
+the agent verifies:
+
+```text
+scheduler_persistent=true
+survives_agent_session_close=true
+next_run_registered=true
+```
+
+If the available scheduler is session-only, stop and report
+`AGENTALERTS_SCHEDULER_NOT_DURABLE` instead of presenting the automation as
+finished.
 
 Compact webhook sends default to one upserted activity named `webhook` when
 `activity_id` is omitted, production APNs, and both `live_activity` plus

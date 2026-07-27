@@ -2,14 +2,21 @@
 set -eu
 
 usage() {
-  printf '%s\n' "Usage: send_webhook.sh [--check] PAYLOAD_JSON" >&2
+  printf '%s\n' "Usage: send_webhook.sh [--check|--check-config] PAYLOAD_JSON" >&2
 }
 
 check_only=false
-if [ "${1:-}" = "--check" ]; then
-  check_only=true
-  shift
-fi
+check_config=false
+case "${1:-}" in
+  --check)
+    check_only=true
+    shift
+    ;;
+  --check-config)
+    check_config=true
+    shift
+    ;;
+esac
 
 if [ "$#" -ne 1 ]; then
   usage
@@ -58,8 +65,49 @@ if [ "$check_only" = true ]; then
 fi
 
 if [ -z "${AGENTALERTS_AGENT_TOKEN:-}" ]; then
-  printf '%s\n' "AGENTALERTS_AGENT_TOKEN is unavailable." >&2
-  exit 78
+  token_file=${AGENTALERTS_TOKEN_FILE:-"${HOME:?}/.config/agent-alerts/token.env"}
+  if [ -L "$token_file" ] || [ ! -f "$token_file" ] || [ ! -r "$token_file" ]; then
+    printf '%s\n' "AGENTALERTS_AGENT_TOKEN is unavailable." >&2
+    exit 78
+  fi
+
+  if token_mode=$(stat -f '%Lp' "$token_file" 2>/dev/null) &&
+    token_owner=$(stat -f '%u' "$token_file" 2>/dev/null); then
+    :
+  elif token_mode=$(stat -c '%a' "$token_file" 2>/dev/null) &&
+    token_owner=$(stat -c '%u' "$token_file" 2>/dev/null); then
+    :
+  else
+    printf '%s\n' "Unable to verify Agent Alerts token file permissions." >&2
+    exit 78
+  fi
+  if [ "$token_owner" != "$(id -u)" ]; then
+    printf '%s\n' "Agent Alerts token file must be owned by the current user." >&2
+    exit 78
+  fi
+  case "$token_mode" in
+    600) ;;
+    *)
+      printf '%s\n' "Agent Alerts token file must have mode 0600." >&2
+      exit 78
+      ;;
+  esac
+
+  if ! AGENTALERTS_AGENT_TOKEN=$(awk '
+    /^[[:space:]]*(#.*)?$/ { next }
+    /^AGENTALERTS_AGENT_TOKEN=[A-Za-z0-9._-]+$/ {
+      if (found) exit 2
+      sub(/^AGENTALERTS_AGENT_TOKEN=/, "")
+      print
+      found = 1
+      next
+    }
+    { exit 3 }
+    END { if (!found) exit 4 }
+  ' "$token_file"); then
+    printf '%s\n' "Agent Alerts token file must contain exactly one AGENTALERTS_AGENT_TOKEN assignment." >&2
+    exit 78
+  fi
 fi
 
 if ! printf '%s' "$AGENTALERTS_AGENT_TOKEN" |
@@ -82,6 +130,11 @@ case "$webhook_url" in
     exit 78
     ;;
 esac
+
+if [ "$check_config" = true ]; then
+  printf '%s\n' "Agent Alerts payload and configuration are valid."
+  exit 0
+fi
 
 if [ ! -x /usr/bin/curl ]; then
   printf '%s\n' "Agent Alerts webhook send requires /usr/bin/curl." >&2

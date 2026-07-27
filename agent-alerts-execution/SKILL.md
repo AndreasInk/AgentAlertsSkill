@@ -98,12 +98,17 @@ scripts/send_webhook.sh --check payload.json
 scripts/send_webhook.sh payload.json
 ```
 
-The helper reads only the payload file and `AGENTALERTS_AGENT_TOKEN`. It
-defaults to the hosted Agent Alerts `agentalerts-webhook` endpoint; set
-`AGENTALERTS_WEBHOOK_URL` only when the app or public setup page supplied a
-different endpoint. It validates compact/full mode separation, keeps the
-Bearer token out of argv, and retries one transient failure with the unchanged
-payload and idempotency key.
+The helper reads the payload and uses `AGENTALERTS_AGENT_TOKEN` from the
+environment when present. Otherwise it safely parses the designated
+`~/.config/agent-alerts/token.env` file after requiring mode `0600`; it never
+shell-sources that file. It defaults to the hosted Agent Alerts
+`agentalerts-webhook` endpoint; set `AGENTALERTS_WEBHOOK_URL` only when the app
+or public setup page supplied a different endpoint. It validates compact/full
+mode separation, keeps the Bearer token out of argv, and retries one transient
+failure with the unchanged payload and idempotency key.
+
+Use `--check-config` during setup to validate the JSON, token environment/file,
+permissions, and endpoint without making a network request.
 
 At runtime, do not request a new broad shell permission or switch to raw curl
 when the helper is blocked. Return `AGENTALERTS_SCRIPT_NOT_AUTHORIZED` when the
