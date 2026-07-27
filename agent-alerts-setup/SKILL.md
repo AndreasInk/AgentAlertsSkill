@@ -162,6 +162,41 @@ policies still need to permit the helper.
 If the scheduled runner cannot execute the helper without interaction, stop
 setup and report `AGENTALERTS_SCRIPT_NOT_AUTHORIZED`.
 
+## Automation Readiness Gate
+
+Setup is incomplete until the real Codex or Claude Code runner proves the
+helper can execute without a manual approval prompt. Do not infer readiness
+from a permissions file, an earlier interactive run, or the presence of the
+script alone.
+
+From the same workspace, sandbox, and permission context the automation will
+use:
+
+1. Run the exact absolute helper path with `--check` and the automation's real
+   payload path.
+2. If the runner asks for shell, file, or command approval, add the narrow
+   persistent rule described above and run the same command again.
+3. The second run must finish with `Agent Alerts payload is valid.` without any
+   prompt, click, confirmation, or temporary permission.
+4. Run the real idempotent smoke send through the same absolute helper path.
+   After any one-time network approval is made persistent, repeat it with the
+   same idempotency key. The repeated command must complete without a prompt.
+5. Only then enable or save the schedule.
+
+Record these non-secret readiness results:
+
+```text
+exact_helper_resolved=true
+payload_check_no_prompt=true
+smoke_send_no_prompt=true
+token_available=true
+webhook_egress_allowed=true
+```
+
+Any false or unverified result blocks scheduling and must return
+`AGENTALERTS_SCRIPT_NOT_AUTHORIZED`. An unattended automation must never depend
+on a future approval dialog.
+
 Compact webhook sends default to one upserted activity named `webhook` when
 `activity_id` is omitted, production APNs, and both `live_activity` plus
 `notification` surfaces. Set `surfaces` explicitly when the automation should

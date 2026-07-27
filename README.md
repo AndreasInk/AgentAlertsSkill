@@ -38,8 +38,10 @@ The legacy `agentalerts` CLI remains an optional compatibility fallback.
 Before scheduling Codex or Claude Code, authorize only the exact bundled
 `agent-alerts-execution/scripts/send_webhook.sh` command, inject the token
 through the runner environment, allow outbound HTTPS to the hosted endpoint,
-and complete one interactive smoke test. Do not broadly allow Bash or disable
-the runner's permission system.
+and complete one interactive smoke test. Then rerun both the payload check and
+smoke command from the real automation context: neither may show a manual
+approval prompt. Do not broadly allow Bash or disable the runner's permission
+system.
 
 ## Live Activity Examples
 
