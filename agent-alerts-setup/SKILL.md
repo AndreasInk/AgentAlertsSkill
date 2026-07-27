@@ -76,9 +76,12 @@ network port, schedule work, or read the Mac app's normal Supabase session.
    prompts for it.
 3. Have the user place the displayed token directly into the runtime's secret
    or environment configuration as `AGENTALERTS_AGENT_TOKEN`. Never ask the
-   user to paste the token into AI chat. Do not create a plaintext token file
-   such as `~/.config/agent-alerts/token.env` unless the user explicitly asks
-   for that storage design.
+   user to paste the token into AI chat. For a local Claude Code or Codex
+   workflow, use `~/.config/agent-alerts/token.env` as the designated durable
+   location when the user agrees. Create it with mode `0600`, keep it outside
+   source control, and have the user enter the token outside the AI
+   conversation. Store exactly `AGENTALERTS_AGENT_TOKEN=<token>` and load it
+   into the automation environment without printing the file.
 4. The bundled helper defaults to the hosted Agent Alerts endpoint. Set
    `AGENTALERTS_WEBHOOK_URL` only when the app or public setup page supplies a
    different endpoint.
@@ -135,7 +138,8 @@ Before scheduling a Codex or Claude Code automation:
 4. Inject `AGENTALERTS_AGENT_TOKEN` through the runner's secret/environment
    configuration. Inject `AGENTALERTS_WEBHOOK_URL` only when the setup flow
    supplied a different endpoint. Never store the token in a tracked settings
-   file.
+   file. A local runner may load the designated `token.env` file through its
+   preauthorized launcher without printing its contents.
 5. Allow outbound HTTPS only to the configured webhook host.
 6. Run one interactive smoke test through the exact automation command before
    enabling its schedule. Confirm the response fields without claiming visible
@@ -171,7 +175,9 @@ widgets, Control Widget state, builder layouts, or other advanced fields.
   in a log, prompt, commit, or shared transcript.
 - Do not copy local CLI sessions into a cloud runtime.
 - Do not ask the user to paste a token into chat.
-- Do not invent a default plaintext token file or claim it is a secret manager.
+- The designated local token file is
+  `~/.config/agent-alerts/token.env`. It must be user-approved, outside source
+  control, mode `0600`, and loaded without echoing or logging its contents.
 - Do not print, echo, or inline `AGENTALERTS_AGENT_TOKEN`.
 - Do not put passwords, Supabase keys, APNs credentials, or token plaintext in
   commands or automation instructions.

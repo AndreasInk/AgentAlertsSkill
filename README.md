@@ -19,7 +19,9 @@ Cursor, CI, no-code tools, and other runtimes that can make an outbound HTTPS
 request. Begin at `https://www.andreas.ink/agent`, complete its connection flow
 with Agent Alerts on iPhone, and store the publish token directly in the
 runtime's secret manager as `AGENTALERTS_AGENT_TOKEN`. Do not paste it into
-agent chat. The bundled helper uses the hosted endpoint by default.
+agent chat. For a local Claude Code or Codex workflow, use the user-approved
+`~/.config/agent-alerts/token.env` file with mode `0600` as the designated
+durable location. The bundled helper uses the hosted endpoint by default.
 
 Use the local macOS MCP helper only when the user explicitly wants a
 desktop-local integration:
