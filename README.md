@@ -2,9 +2,9 @@
 
 Public agent skills for setting up, running, and self-hosting Agent Alerts.
 
-Use the Agent Alerts namespace in public configuration: `agentalerts_send`,
-`AGENTALERTS_AGENT_TOKEN`, and `agentalerts-webhook`. The source repository
-name remains unchanged until its separate repository migration is complete.
+Use the Agent Alerts namespace in public configuration: `agentalerts_send` and
+`AGENTALERTS_AGENT_TOKEN`. Always use the exact webhook URL supplied by Agent
+Alerts; hosted compatibility endpoints may retain a legacy function name.
 
 This repo contains three skills:
 
@@ -16,8 +16,15 @@ This repo contains three skills:
 
 ## Delivery Routes
 
-Use the local macOS MCP helper for a local Codex, Claude Code, Cursor, or other
-MCP-compatible desktop client:
+Use the HTTPS webhook by default for local or hosted Codex, Claude Code,
+Cursor, CI, no-code tools, and other runtimes that can make an outbound HTTPS
+request. Create a revocable agent token in **Settings → Webhooks & Agents** on
+iPhone, store the supplied endpoint as `AGENTALERTS_WEBHOOK_URL`, store the
+token only in that runtime's secret manager, and send it as the Bearer
+credential.
+
+Use the local macOS MCP helper only when the user explicitly wants a
+desktop-local integration:
 
 1. Sign into Agent Alerts on iPhone, open the Mac app, and approve the
    discovered Mac from iPhone.
@@ -26,12 +33,7 @@ MCP-compatible desktop client:
 3. Restart the AI app, check Agent Alerts status, and let the runtime agent call
    `agentalerts_send`.
 
-Use the HTTPS webhook for hosted agents, CI, no-code tools, and any runtime that
-can make an outbound HTTP request but cannot reach the local Mac helper. Create
-a revocable agent token in **Settings → Webhooks & Agents** on iPhone, store it
-only in that runtime's secret manager, and send it as the Bearer credential to
-the supplied webhook URL. The webhook is the preferred cloud route; the legacy
-`agentalerts` CLI remains an optional compatibility fallback.
+The legacy `agentalerts` CLI remains an optional compatibility fallback.
 
 ## Live Activity Examples
 
@@ -52,7 +54,7 @@ the supplied webhook URL. The webhook is the preferred cloud route; the legacy
 Ask an agent to install this skill repo:
 
 ```text
-Install https://github.com/AndreasInk/ReportKit-Skill.git so I can set up Agent Alerts automations.
+Install https://github.com/AndreasInk/AgentAlertsSkill.git so I can set up Agent Alerts automations.
 Use $agent-alerts-setup to design or install an automation.
 Use $agent-alerts-execution inside the automation when it is time to send or skip.
 Use $agent-alerts-webhook-self-host only when I explicitly want to deploy the webhook stack to my own Supabase project.

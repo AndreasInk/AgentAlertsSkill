@@ -1,6 +1,6 @@
 ---
 name: agent-alerts-execution
-description: Execute an Agent Alerts send from an existing automation. Use when an agent, CI job, scheduled task, Codex, Cursor, Claude, or other workflow has evaluated state and now needs to send or skip an iPhone Live Activity update, widget refresh, grouped push notification, or Control Widget update through local macOS MCP, an HTTPS webhook, or an existing legacy CLI path.
+description: Execute an Agent Alerts send from an existing automation. Use when an agent, CI job, scheduled task, Codex, Cursor, Claude, or other workflow has evaluated state and now needs to send or skip an iPhone Live Activity update, widget refresh, grouped push notification, or Control Widget update through the default HTTPS webhook, optional local macOS MCP, or an existing legacy CLI path.
 ---
 
 # Agent Alerts Execution
@@ -8,17 +8,17 @@ description: Execute an Agent Alerts send from an existing automation. Use when 
 Run this skill only after the automation has evaluated its current state. Do not
 redesign the automation or create credentials here.
 
-Use **Agent Alerts** in user-facing text and configuration: `agentalerts_send`,
-`AGENTALERTS_AGENT_TOKEN`, `agentalerts-webhook`, and `agentalerts`.
+Use **Agent Alerts** in user-facing text and configuration:
+`agentalerts_send`, `AGENTALERTS_WEBHOOK_URL`,
+`AGENTALERTS_AGENT_TOKEN`, and `agentalerts`.
 
 ## Runtime Rules
 
 1. Read the automation's configured route and current state.
 2. If its skip condition is true, do not send.
-3. Use local `agentalerts_send` only when the configured macOS MCP helper is
-   available.
-4. Use the configured HTTPS webhook for a cloud or hosted runtime. It is the
-   preferred cloud route.
+3. Use the configured HTTPS webhook by default.
+4. Use local `agentalerts_send` only when the automation explicitly selected
+   the configured macOS MCP helper.
 5. Use `agentalerts send --file payload.json` only when the automation explicitly
    selected the CLI path.
 6. Keep deep links, idempotency, and payload data in JSON. Never print,
@@ -79,13 +79,29 @@ For a normal alert, prefer the compact webhook body:
 
 ```json
 {
-  "title": "Release verification",
-  "summary": "Build passed; simulator smoke test is running.",
-  "status": "warning",
-  "activity_id": "release-watch",
-  "source_name": "CI"
+  "title": "Build finished",
+  "summary": "All tests passed.",
+  "status": "good",
+  "activity_id": "build-monitor",
+  "source_name": "Claude",
+  "surfaces": ["live_activity", "notification"],
+  "idempotency_key": "build-monitor-2026-07-27T14-30-00Z"
 }
 ```
+
+For shell-based runtimes, copy
+`assets/compact-webhook-payload.json`, replace its example values and fresh
+idempotency key, then use the bundled helper:
+
+```bash
+scripts/send_webhook.sh --check payload.json
+scripts/send_webhook.sh payload.json
+```
+
+The helper reads only the payload file, `AGENTALERTS_WEBHOOK_URL`, and
+`AGENTALERTS_AGENT_TOKEN`. It validates compact/full mode separation, keeps the
+Bearer token out of argv, and retries one transient failure with the unchanged
+payload and idempotency key.
 
 Send these headers:
 

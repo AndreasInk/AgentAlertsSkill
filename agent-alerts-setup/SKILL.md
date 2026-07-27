@@ -1,6 +1,6 @@
 ---
 name: agent-alerts-setup
-description: Set up a user-facing automation that sends Agent Alerts iPhone Live Activity updates, Home or Lock Screen widget refreshes, grouped push notifications, or Control Widget state updates. Use when configuring a report, monitor, schedule, CI job, Codex, Cursor, Claude, or other workflow that should publish concise Agent Alerts status updates through local macOS MCP or an HTTPS webhook.
+description: Set up a user-facing automation that sends Agent Alerts iPhone Live Activity updates, Home or Lock Screen widget refreshes, grouped push notifications, or Control Widget state updates. Use when configuring a report, monitor, schedule, CI job, Codex, Cursor, Claude, or other workflow that should publish concise Agent Alerts status updates through the default HTTPS webhook or optional local macOS MCP.
 ---
 
 # Agent Alerts Setup
@@ -14,8 +14,8 @@ Use **Agent Alerts** in user-facing copy and configuration. Use these
 identifiers consistently:
 
 - local tools: `agentalerts_status`, `agentalerts_send`, and `agentalerts_alarm`
-- cloud token and endpoint conventions: `AGENTALERTS_AGENT_TOKEN` and
-  `/functions/v1/agentalerts-webhook`
+- cloud configuration: `AGENTALERTS_WEBHOOK_URL` and
+  `AGENTALERTS_AGENT_TOKEN`
 - optional CLI: `agentalerts`
 
 Do not rename those identifiers in MCP configuration, headers, payloads, secret
@@ -25,11 +25,10 @@ names, or scripts.
 
 Choose the route before designing the runtime prompt:
 
-1. **Local macOS MCP** — use for a local AI desktop client that can start the
-   Agent Alerts Mac helper. This is the preferred local route.
-2. **HTTPS webhook** — use for hosted agents, CI, no-code tools, or any runtime
-   with outbound HTTPS but no access to the paired Mac. This is the preferred
-   cloud route.
+1. **HTTPS webhook** — use by default for local or hosted Codex, Claude,
+   Cursor, CI, no-code tools, and other runtimes with outbound HTTPS.
+2. **Local macOS MCP** — use only when the user explicitly asks for a
+   desktop-local integration that can start the Agent Alerts Mac helper.
 3. **Legacy CLI** — use only when an existing automation already depends on
    `agentalerts send --file`; do not select it for a new cloud integration when
    the webhook is available.
@@ -58,18 +57,16 @@ network port, schedule work, or read the Mac app's normal Supabase session.
    syncing device and Live Activity tokens.
 2. In **Settings → Webhooks & Agents**, create a named publish token for the
    specific runtime. Copy or share the generated endpoint and setup details.
-3. Store the endpoint as a non-secret configuration value and the displayed
-   token value as `AGENTALERTS_AGENT_TOKEN` in that runtime's secret
-   manager. The plaintext token is shown once.
+3. Store the endpoint as `AGENTALERTS_WEBHOOK_URL` and the displayed token as
+   `AGENTALERTS_AGENT_TOKEN` in that runtime's secret manager. The plaintext
+   token is shown once.
 4. Allow only outbound HTTPS to the supplied endpoint. Do not put the token in a
    URL, query string, prompt, source file, log, or shell history.
 5. Run one compact idempotent smoke test and verify the returned delivery status.
 
-The endpoint is normally:
-
-```text
-https://<project-ref>.supabase.co/functions/v1/agentalerts-webhook
-```
+Use the exact HTTPS endpoint supplied by Agent Alerts. Do not derive a function
+path or replace a legacy hosted function name. Self-hosted deployments use the
+endpoint returned by `$agent-alerts-webhook-self-host`.
 
 The webhook accepts `POST` JSON only. It requires:
 
@@ -86,12 +83,21 @@ Use this compact body for ordinary cloud alerts:
 
 ```json
 {
-  "title": "Release verification",
-  "summary": "Build passed; simulator smoke test is running.",
-  "status": "warning",
-  "activity_id": "release-watch",
-  "source_name": "CI"
+  "title": "Build finished",
+  "summary": "All tests passed.",
+  "status": "good",
+  "activity_id": "build-monitor",
+  "source_name": "Claude",
+  "surfaces": ["live_activity", "notification"],
+  "idempotency_key": "build-monitor-2026-07-27T14-30-00Z"
 }
+```
+
+Copy `../agent-alerts-execution/assets/compact-webhook-payload.json`, replace the
+example values and idempotency key, then validate it without sending:
+
+```bash
+../agent-alerts-execution/scripts/send_webhook.sh --check payload.json
 ```
 
 Compact webhook sends default to one upserted activity named `webhook` when
@@ -102,7 +108,7 @@ widgets, Control Widget state, builder layouts, or other advanced fields.
 
 ## Credential Rules
 
-- Prefer the macOS helper for local AI apps and the webhook for cloud runtimes.
+- Prefer the webhook unless the user explicitly selected local macOS MCP.
 - Create one revocable token per runtime; rotate or revoke any token that appears
   in a log, prompt, commit, or shared transcript.
 - Do not copy local CLI sessions into a cloud runtime.

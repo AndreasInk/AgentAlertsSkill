@@ -1,0 +1,12 @@
+{
+  "title": "Build finished",
+  "summary": "All tests passed.",
+  "status": "good",
+  "activity_id": "build-monitor",
+  "source_name": "Claude",
+  "surfaces": [
+    "live_activity",
+    "notification"
+  ],
+  "idempotency_key": "build-monitor-2026-07-27T14-30-00Z"
+}
