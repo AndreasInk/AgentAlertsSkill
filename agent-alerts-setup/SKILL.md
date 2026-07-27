@@ -100,6 +100,41 @@ example values and idempotency key, then validate it without sending:
 ../agent-alerts-execution/scripts/send_webhook.sh --check payload.json
 ```
 
+## Authorize Unattended Automations
+
+Before scheduling a Codex or Claude Code automation:
+
+1. Resolve the installed absolute path to
+   `agent-alerts-execution/scripts/send_webhook.sh`.
+2. Allow that exact executable path with arguments. Do not broadly allow
+   `Bash`, `sh`, `/usr/bin/curl`, or unrestricted shell execution.
+3. Make the skill folder readable/executable and the automation payload
+   location writable inside the runner sandbox.
+4. Inject `AGENTALERTS_WEBHOOK_URL` and `AGENTALERTS_AGENT_TOKEN` through the
+   runner's secret/environment configuration. Never store the token in a
+   tracked settings file.
+5. Allow outbound HTTPS only to the configured webhook host.
+6. Run one interactive smoke test through the exact automation command before
+   enabling its schedule. Confirm the response fields without claiming visible
+   device delivery.
+
+For Codex, approve a reusable command prefix scoped to the exact absolute helper
+path. Do not rely on an approval prompt during an unattended run.
+
+For Claude Code, add a narrow permission rule through `/permissions`,
+`.claude/settings.json`, or `--allowedTools`:
+
+```text
+Bash(/absolute/path/to/agent-alerts-execution/scripts/send_webhook.sh:*)
+```
+
+Do not use `Bash` without a specifier or
+`--dangerously-skip-permissions`. Environment-level network and filesystem
+policies still need to permit the helper.
+
+If the scheduled runner cannot execute the helper without interaction, stop
+setup and report `AGENTALERTS_SCRIPT_NOT_AUTHORIZED`.
+
 Compact webhook sends default to one upserted activity named `webhook` when
 `activity_id` is omitted, production APNs, and both `live_activity` plus
 `notification` surfaces. Set `surfaces` explicitly when the automation should

@@ -103,6 +103,11 @@ The helper reads only the payload file, `AGENTALERTS_WEBHOOK_URL`, and
 Bearer token out of argv, and retries one transient failure with the unchanged
 payload and idempotency key.
 
+At runtime, do not request a new broad shell permission or switch to raw curl
+when the helper is blocked. Return `AGENTALERTS_SCRIPT_NOT_AUTHORIZED` when the
+exact helper command, skill path, payload path, secret injection, or webhook
+network egress was not preauthorized during setup.
+
 Send these headers:
 
 ```text
@@ -152,6 +157,8 @@ Report the actual delivery outcome:
 - missing local tool: the local MCP helper is unavailable; use the webhook only
   if that route was configured
 - missing endpoint or token: the cloud route lacks its configured prerequisite
+- `AGENTALERTS_SCRIPT_NOT_AUTHORIZED`: the unattended runner cannot execute the
+  exact helper or reach its configured webhook without interaction
 - HTTP 401: token is missing, revoked, expired, malformed, or sent incorrectly
 - HTTP 400: correct the JSON, conflicting idempotency keys, or forbidden URL
   credential
