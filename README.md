@@ -43,6 +43,14 @@ smoke command from the real automation context: neither may show a manual
 approval prompt. Do not broadly allow Bash or disable the runner's permission
 system.
 
+For Codex, use the saved automation's own **Run** action for this proof. A
+nested `codex exec` launched from a restricted parent sandbox can make Codex's
+state database read-only or reject the launch directory before the webhook
+helper runs; that is a failed readiness test, not evidence that the helper is
+authorized. Fix the saved automation workspace and exact-helper rule, then
+rerun without a prompt. Never use
+`--dangerously-bypass-approvals-and-sandbox` as the recovery.
+
 Use a durable scheduler for future or recurring work. A session-only Claude
 Code cron is not complete setup unless the user explicitly wants an ephemeral
 reminder that stops when the session closes.

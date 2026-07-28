@@ -220,6 +220,42 @@ Any false or unverified result blocks scheduling and must return
 `AGENTALERTS_SCRIPT_NOT_AUTHORIZED`. An unattended automation must never depend
 on a future approval dialog.
 
+### Codex Runner Recovery
+
+For Codex, run the readiness test from the saved automation's own **Run** action
+in Codex. A nested `codex exec` launched from another sandbox is not equivalent
+to the saved automation runner and can fail before the helper is reached.
+
+Treat any of these as a failed readiness test:
+
+- Codex displays a manual approval or confirmation during the automation.
+- The runner reports that its Codex state database is read-only.
+- The runner rejects the launch directory as untrusted or outside its workspace.
+- The automation can read the helper but cannot write its payload path.
+- `--check-config` or the real send needs a broader shell or raw-curl rule.
+
+Recover without weakening Codex security:
+
+1. Open the saved automation in Codex and confirm its configured workspace is
+   the same writable directory used for the payload.
+2. Keep Codex's own state directory available to the Codex automation runner;
+   do not wrap `codex exec` in a parent sandbox that makes the state database
+   read-only.
+3. Add one reusable Codex rule whose command prefix is the resolved absolute
+   `send_webhook.sh` path. Remove obsolete broad `reportkit`, shell, raw curl,
+   or MCP/CLI send approvals after affected automations use the helper.
+4. Keep the token in the user-approved mode-`0600`
+   `~/.config/agent-alerts/token.env` file or the runner's secret environment,
+   never in the automation prompt or payload.
+5. Run the saved automation again. Both the standalone `--check-config` command
+   and the idempotent smoke send must complete without a prompt.
+
+Do not use `--dangerously-bypass-approvals-and-sandbox`,
+`--dangerously-skip-permissions`, or a broad allow rule to make the test pass.
+If the saved automation still prompts, return
+`AGENTALERTS_SCRIPT_NOT_AUTHORIZED` and leave its schedule disabled until the
+exact-helper test passes.
+
 ## Scheduler Durability Gate
 
 Agent Alerts delivers updates; it does not keep Claude Code or Codex alive.
