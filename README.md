@@ -1,59 +1,56 @@
 # Agent Alerts Agent Skills
 
-Public agent skills for setting up and running Agent Alerts.
+[![skills.sh](https://skills.sh/b/AndreasInk/AgentAlertsSkill)](https://skills.sh/AndreasInk/AgentAlertsSkill)
 
-Use the Agent Alerts namespace in public configuration: `agentalerts_send` and
-`AGENTALERTS_AGENT_TOKEN`. Start new setups at
-[`https://www.andreas.ink/agent`](https://www.andreas.ink/agent).
+Trusted, reviewable agent skills for sending Agent Alerts to iPhone through one
+hosted HTTPS webhook and one bundled script.
 
-This repo currently publishes two skills:
+Start new setups at [andreas.ink/agent](https://www.andreas.ink/agent). The
+connection flow creates a publish-only token for the runtime. Keep it in the
+runtime's secret manager as `AGENTALERTS_AGENT_TOKEN`; never paste it into
+agent chat.
 
-- `$agent-alerts-setup`: design an automation and choose its delivery route.
-- `$agent-alerts-execution`: evaluate an existing automation and send or skip
-  an alert safely.
+This repository publishes two skills:
 
-## Delivery Routes
+- `$agent-alerts-setup` designs and verifies an automation.
+- `$agent-alerts-execution` sends or skips an alert through
+  `agent-alerts-execution/scripts/send_webhook.sh`.
 
-Use the HTTPS webhook by default for local or hosted Codex, Claude Code,
-Cursor, CI, no-code tools, and other runtimes that can make an outbound HTTPS
-request. Begin at `https://www.andreas.ink/agent`, complete its connection flow
-with Agent Alerts on iPhone, and store the publish token directly in the
-runtime's secret manager as `AGENTALERTS_AGENT_TOKEN`. Do not paste it into
-agent chat. For a local Claude Code or Codex workflow, use the user-approved
-`~/.config/agent-alerts/token.env` file with mode `0600` as the designated
-durable location. The bundled helper uses the hosted endpoint by default.
+The script validates the payload and secret configuration, uses the hosted
+endpoint by default, keeps the token out of process arguments, and preserves
+idempotency across a retry.
 
-Use the local macOS MCP helper only when the user explicitly wants a
-desktop-local integration:
+## Install
 
-1. Sign into Agent Alerts on iPhone, open the Mac app, and approve the
-   discovered Mac from iPhone.
-2. Choose the AI app in Agent Alerts for Mac and copy its setup command or
-   config.
-3. Restart the AI app, check Agent Alerts status, and let the runtime agent call
-   `agentalerts_send`.
+```bash
+npx skills add AndreasInk/AgentAlertsSkill
+```
 
-The legacy `agentalerts` CLI remains an optional compatibility fallback.
+Or ask your agent:
 
-Before scheduling Codex or Claude Code, authorize only the exact bundled
-`agent-alerts-execution/scripts/send_webhook.sh` command, inject the token
-through the runner environment, allow outbound HTTPS to the hosted endpoint,
-and complete one interactive smoke test. Then rerun both the payload check and
-smoke command from the real automation context: neither may show a manual
-approval prompt. Do not broadly allow Bash or disable the runner's permission
-system.
+```text
+Install https://github.com/AndreasInk/AgentAlertsSkill.
+Use $agent-alerts-setup to configure my automation.
+Use $agent-alerts-execution when it is time to send or skip.
+```
 
-For Codex, use the saved automation's own **Run** action for this proof. A
-nested `codex exec` launched from a restricted parent sandbox can make Codex's
-state database read-only or reject the launch directory before the webhook
-helper runs; that is a failed readiness test, not evidence that the helper is
-authorized. Fix the saved automation workspace and exact-helper rule, then
-rerun without a prompt. Never use
-`--dangerously-bypass-approvals-and-sandbox` as the recovery.
+These files follow Vercel's
+[Agent Skills guidance](https://vercel.com/docs/agent-resources/skills): focused
+instructions, clear activation descriptions, and a deterministic bundled
+script. The public [skills.sh directory](https://skills.sh) surfaces
+GitHub-hosted skills from install activity and publishes security-audit
+information. Review skill files and scripts before installing or updating
+them.
 
-Use a durable scheduler for future or recurring work. A session-only Claude
-Code cron is not complete setup unless the user explicitly wants an ephemeral
-reminder that stops when the session closes.
+## Trust Model
+
+- One publish-only token per runtime.
+- One auditable HTTPS helper for every send.
+- No token in prompts, URLs, logs, source files, or command arguments.
+- Exact-script authorization for unattended runners.
+- Stable idempotency keys for retries.
+- Delivery counts reported without treating request acceptance as
+  device-visible proof.
 
 ## Live Activity Examples
 
@@ -69,27 +66,7 @@ reminder that stops when the session closes.
 | --- | --- | --- |
 | ![Codex Agent Progress](assets/live-activity-previews/live-activity-codex-agent-progress.png) | ![Builder Launch Console](assets/live-activity-previews/live-activity-builder-launch-console.png) | ![Builder Compact Console](assets/live-activity-previews/live-activity-builder-compact-console.png) |
 
-## Install
-
-Ask an agent to install this skill repo:
-
-```text
-Install https://github.com/AndreasInk/AgentAlertsSkill.git so I can set up Agent Alerts automations.
-Use $agent-alerts-setup to design or install an automation.
-Use $agent-alerts-execution inside the automation when it is time to send or skip.
-```
-
-Use `$agent-alerts-setup` for a report, monitor, schedule, CI check, or agent
-workflow. Include `$agent-alerts-execution` in the runtime prompt.
-
-## Repo Contents
-
-- `agent-alerts-setup/SKILL.md`
-- `agent-alerts-execution/SKILL.md`
-- `assets/live-activity-previews/`
-
 ## More Info
 
-Read the [Agent Alerts docs](https://andreas.craft.me/qtX8oWJYSSxbJ2), join the
-[iOS TestFlight](https://testflight.apple.com/join/KCr6Sxgn), or download the
-[latest macOS beta](https://github.com/AndreasInk/ReportKit-Skill/releases/tag/beta).
+Read the [Agent Alerts docs](https://andreas.craft.me/qtX8oWJYSSxbJ2) or join
+the [iOS TestFlight](https://testflight.apple.com/join/KCr6Sxgn).

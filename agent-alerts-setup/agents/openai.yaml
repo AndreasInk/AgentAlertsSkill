@@ -1,4 +1,4 @@
 interface:
   display_name: "Agent Alerts Setup"
-  short_description: "Design Agent Alerts automations and delivery routes"
-  default_prompt: "Use $agent-alerts-setup to design an Agent Alerts automation that sends through local MCP or a hosted HTTPS webhook."
+  short_description: "Set up trusted webhook alerts for iPhone"
+  default_prompt: "Use $agent-alerts-setup to configure and verify an Agent Alerts automation through the hosted HTTPS webhook and bundled script."
