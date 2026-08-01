@@ -30,6 +30,15 @@ Do not switch to a manually recreated request when the helper is blocked.
 Return `AGENTALERTS_SCRIPT_NOT_AUTHORIZED` if the exact script, payload path,
 secret source, or HTTPS egress was not authorized during setup.
 
+Place the payload and any automation-owned receipts inside the scheduler's
+approved writable workspace. Configure that workspace before enabling the
+schedule. A permitted webhook helper does not automatically authorize payload
+creation.
+
+Test payload creation from the real scheduled context, not only an interactive
+session. Confirm the runner can create, replace, parse, and read back the exact
+payload file without an approval prompt.
+
 ## Payload
 
 For ordinary alerts, begin with
