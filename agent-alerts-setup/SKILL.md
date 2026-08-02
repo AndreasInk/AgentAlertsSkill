@@ -24,12 +24,14 @@ token into chat.
 ## Configure The Webhook
 
 1. Name the runtime and complete the connection flow at the public setup page.
-2. Store the one-time token as `AGENTALERTS_AGENT_TOKEN` in the runtime's secret
-   manager.
-3. For a local automation, use the user-approved
-   `~/.config/agent-alerts/token.env` file with mode `0600`. Store exactly one
-   line: `AGENTALERTS_AGENT_TOKEN=<token>`. The user must enter it outside the
-   AI conversation.
+2. Choose the token location for the runtime:
+   - Hosted runtime: store the one-time token in that runtime's secret manager
+     as `AGENTALERTS_AGENT_TOKEN`.
+   - Local Mac: store exactly one line,
+     `AGENTALERTS_AGENT_TOKEN=<token>`, in the user-approved
+     `~/.config/agent-alerts/token.env` file and set its mode to `0600`.
+3. Have the user enter the token directly into the selected secret store,
+   outside the AI conversation. Never ask them to paste it into agent chat.
 4. Use the endpoint built into
    `../agent-alerts-execution/scripts/send_webhook.sh`. Set
    `AGENTALERTS_WEBHOOK_URL` only when the setup page supplies a different

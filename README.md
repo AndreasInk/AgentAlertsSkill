@@ -6,9 +6,12 @@ Trusted, reviewable agent skills for sending Agent Alerts to iPhone through one
 hosted HTTPS webhook and one bundled script.
 
 Start new setups at [andreas.ink/agent](https://www.andreas.ink/agent). The
-connection flow creates a publish-only token for the runtime. Keep it in the
-runtime's secret manager as `AGENTALERTS_AGENT_TOKEN`; never paste it into
-agent chat.
+connection flow creates a publish-only token for the runtime. For a hosted
+runtime, store it in that runtime's secret manager as
+`AGENTALERTS_AGENT_TOKEN`. For a local Mac setup, store exactly
+`AGENTALERTS_AGENT_TOKEN=<token>` in
+`~/.config/agent-alerts/token.env`, set the file to mode `0600`, and enter the
+token outside the agent conversation. Never paste the token into agent chat.
 
 This repository publishes two skills:
 
