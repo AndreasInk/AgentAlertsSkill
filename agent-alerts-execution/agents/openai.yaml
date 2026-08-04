@@ -1,4 +1,4 @@
 interface:
   display_name: "Agent Alerts Execution"
-  short_description: "Send trusted webhook alerts to iPhone"
-  default_prompt: "Use $agent-alerts-execution to send or skip an Agent Alerts update through the hosted HTTPS webhook with the bundled script."
+  short_description: "Choose and send trusted iPhone alert variants"
+  default_prompt: "Use $agent-alerts-execution to choose an appropriate Live Activity presentation, then send or skip the Agent Alerts update through the hosted HTTPS webhook."

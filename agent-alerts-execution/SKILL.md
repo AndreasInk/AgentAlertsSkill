@@ -1,6 +1,6 @@
 ---
 name: agent-alerts-execution
-description: Send or skip an Agent Alerts update through the hosted HTTPS webhook using the bundled send_webhook.sh helper. Use after an agent, CI job, scheduled task, Codex, Cursor, Claude, or another workflow has evaluated state and needs to publish an iPhone Live Activity update, widget refresh, grouped notification, or Control Widget update.
+description: Send or skip an Agent Alerts update through the hosted HTTPS webhook using the bundled send_webhook.sh helper. Use after an agent, CI job, scheduled task, Codex, Cursor, Claude, or another workflow has evaluated state and needs to publish an iPhone Live Activity update, choose a chart, progress, or direct Yes/No Live Activity presentation, refresh a widget, send a grouped notification, or update a Control Widget.
 ---
 
 # Agent Alerts Execution
@@ -82,6 +82,33 @@ For widgets, Control Widget state, builder layouts, or other advanced fields,
 use the configured full webhook contract with snake_case routing fields and a
 nested `payload` object. Do not mix that object with compact `title`, `summary`,
 `status`, `source_name`, or `deep_link` fields.
+
+## Choose a Live Activity presentation
+
+Keep the default presentation unless the underlying information benefits from
+a more specific representation. Never invent chart points, progress, steps, or
+a decision merely to make an alert look richer.
+
+Choose one primary fixed-template visual family. Use `template: growth` for a
+chart or `template: agent` for progress. Do not include both and claim both are
+visible: put secondary information in metric text, use a validated custom
+builder layout, or publish a separate activity.
+
+- Use `chart_style: line` for continuous movement or direction over time.
+- Use `chart_style: area` when the magnitude beneath a trend matters.
+- Use `chart_style: bar` for discrete periods or categories.
+- Use `progress_style: linear` for general continuous completion.
+- Use `progress_style: ring` for one compact completion percentage.
+- Use `progress_style: segmented` for a finite checklist or step sequence.
+- Use `interaction.kind: yes_no` only for an explicit binary decision. A
+  pending response is unknown, not No; iOS may require authentication before a
+  Lock Screen control runs. Treat the decision card as the primary presentation
+  while the interaction is active.
+
+Omit `chart_style` and `progress_style` to retain the backward-compatible line
+and linear defaults. Before selecting or composing a non-default presentation,
+read `references/live-activity-variants.md`. When visual hierarchy matters,
+inspect only the relevant bundled PNG with the available image-viewing tool.
 
 ## Safety
 
