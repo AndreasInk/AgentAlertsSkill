@@ -110,6 +110,25 @@ and linear defaults. Before selecting or composing a non-default presentation,
 read `references/live-activity-variants.md`. When visual hierarchy matters,
 inspect only the relevant bundled PNG with the available image-viewing tool.
 
+## Schedule a future Live Activity
+
+Use the server-backed schedule surface only for an explicit one-shot Live
+Activity start from 1 minute through 30 days in the future. Supply exactly one
+of `fireAt` or `fireInSeconds`, force new-activity routing, and retain the
+returned schedule ID. Use that ID to check status or cancel while the request
+is still queued. Recurring schedules remain the calling workflow's
+responsibility.
+
+With the Agent Alerts CLI, create the schedule with `agentalerts schedule
+--file request.json`, then use `agentalerts schedule status SCHEDULE_ID` or
+`agentalerts schedule cancel SCHEDULE_ID`. When the ReportKit remote MCP is
+available, use its matching schedule, status, and cancel tools instead.
+
+Report lifecycle truth precisely: `queued` is only server acceptance, `sent`
+is only APNs acceptance, cancellation may become too late after dispatch is
+claimed, and none of those states proves that the Live Activity appeared on
+the iPhone.
+
 ## Safety
 
 - Never print, interpolate, echo, log, or pass
