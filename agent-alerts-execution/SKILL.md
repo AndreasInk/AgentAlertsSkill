@@ -1,6 +1,6 @@
 ---
 name: agent-alerts-execution
-description: Send or skip an Agent Alerts update through the hosted HTTPS webhook using the bundled send_webhook.sh helper. Use after an agent, CI job, scheduled task, Codex, Cursor, Claude, or another workflow has evaluated state and needs to publish an iPhone Live Activity update, choose a chart, progress, or direct Yes/No Live Activity presentation, refresh a widget, send a grouped notification, or update a Control Widget.
+description: Send or skip an Agent Alerts update through the reviewed hosted webhook using the bundled send_webhook.sh helper. Use after an agent, CI job, scheduled task, Codex, Cursor, Claude, or another workflow has evaluated state and needs to publish an iPhone Live Activity update, choose a chart, progress, or direct Yes/No Live Activity presentation, refresh a widget, send a grouped notification, or update a Control Widget.
 ---
 
 # Agent Alerts Execution
@@ -28,7 +28,7 @@ configuration during a normal run.
 Use the installed skill's resolved absolute script path in unattended runners.
 Do not switch to a manually recreated request when the helper is blocked.
 Return `AGENTALERTS_SCRIPT_NOT_AUTHORIZED` if the exact script, payload path,
-secret source, or HTTPS egress was not authorized during setup.
+secret source, or network egress was not authorized during setup.
 
 Place the payload and any automation-owned receipts inside the scheduler's
 approved writable workspace. Configure that workspace before enabling the
@@ -70,10 +70,9 @@ The helper:
 - sends the JSON with a matching `Idempotency-Key`; and
 - retries one transient failure with the unchanged payload.
 
-Review the bundled
-[`send_webhook.sh`](https://github.com/AndreasInk/AgentAlertsSkill/blob/main/agent-alerts-execution/scripts/send_webhook.sh)
-helper to verify the destination, credential handling, payload validation, and
-request behavior before authorizing it.
+Review the bundled `scripts/send_webhook.sh` helper to verify the destination,
+credential handling, payload validation, and request behavior before
+authorizing it.
 
 The bundled public helper does not accept a custom webhook destination. This
 keeps the bearer token pinned to the reviewed Agent Alerts host.
