@@ -120,16 +120,16 @@ default_webhook_url="https://bsakakesupfudupbxflj.supabase.co/functions/v1/agent
 webhook_url=${AGENTALERTS_WEBHOOK_URL:-$default_webhook_url}
 
 case "$webhook_url" in
-  https://*[\?\#]*)
+  *[\?\#]*)
     printf '%s\n' "AGENTALERTS_WEBHOOK_URL must not contain a query or fragment." >&2
     exit 78
     ;;
-  https://*) ;;
-  *)
-    printf '%s\n' "AGENTALERTS_WEBHOOK_URL must use HTTPS." >&2
-    exit 78
-    ;;
 esac
+
+if [ "${webhook_url#https://}" = "$webhook_url" ]; then
+  printf '%s\n' "AGENTALERTS_WEBHOOK_URL must use HTTPS." >&2
+  exit 78
+fi
 
 if [ "$check_config" = true ]; then
   printf '%s\n' "Agent Alerts payload and configuration are valid."
