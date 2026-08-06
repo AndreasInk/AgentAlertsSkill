@@ -47,20 +47,8 @@ chmod 600 "$token_file"
 env -u AGENTALERTS_AGENT_TOKEN HOME="$token_home" \
   "$sender" --check-config "$example" >/dev/null
 
-env AGENTALERTS_AGENT_TOKEN=rk_agent_test_secret \
-  AGENTALERTS_WEBHOOK_URL=https://alerts.example.com/webhook \
-  "$sender" --check-config "$example" >/dev/null
-
 expect_failure 78 env AGENTALERTS_AGENT_TOKEN=rk_agent_test_secret \
-  AGENTALERTS_WEBHOOK_URL=http://alerts.example.com/webhook \
-  "$sender" --check-config "$example"
-
-expect_failure 78 env AGENTALERTS_AGENT_TOKEN=rk_agent_test_secret \
-  AGENTALERTS_WEBHOOK_URL=https://alerts.example.com/webhook?source=test \
-  "$sender" --check-config "$example"
-
-expect_failure 78 env AGENTALERTS_AGENT_TOKEN=rk_agent_test_secret \
-  AGENTALERTS_WEBHOOK_URL=https://alerts.example.com/webhook#test \
+  AGENTALERTS_WEBHOOK_URL=custom-destination \
   "$sender" --check-config "$example"
 
 chmod 644 "$token_file"

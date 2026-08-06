@@ -64,7 +64,7 @@ The helper:
 - validates compact and full payload modes;
 - reads `AGENTALERTS_AGENT_TOKEN` from the environment or safely parses the
   approved mode-`0600` `~/.config/agent-alerts/token.env` file;
-- defaults to the hosted Agent Alerts endpoint at
+- sends only to the hosted Agent Alerts endpoint at
   `bsakakesupfudupbxflj.supabase.co`;
 - keeps the Bearer token out of process arguments;
 - sends the JSON with a matching `Idempotency-Key`; and
@@ -75,8 +75,8 @@ Review the bundled
 helper to verify the destination, credential handling, payload validation, and
 request behavior before authorizing it.
 
-Set `AGENTALERTS_WEBHOOK_URL` only when the Agent Alerts setup page supplied a
-different HTTPS endpoint. Never place credentials in the URL.
+The bundled public helper does not accept a custom webhook destination. This
+keeps the bearer token pinned to the reviewed Agent Alerts host.
 
 For widgets, Control Widget state, builder layouts, or other advanced fields,
 use the configured full webhook contract with snake_case routing fields and a

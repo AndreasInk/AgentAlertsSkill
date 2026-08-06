@@ -116,18 +116,8 @@ if ! printf '%s' "$AGENTALERTS_AGENT_TOKEN" |
   exit 78
 fi
 
-default_webhook_url="https://bsakakesupfudupbxflj.supabase.co/functions/v1/agentalerts-webhook"
-webhook_url=${AGENTALERTS_WEBHOOK_URL:-$default_webhook_url}
-
-case "$webhook_url" in
-  *[\?\#]*)
-    printf '%s\n' "AGENTALERTS_WEBHOOK_URL must not contain a query or fragment." >&2
-    exit 78
-    ;;
-esac
-
-if [ "${webhook_url#https://}" = "$webhook_url" ]; then
-  printf '%s\n' "AGENTALERTS_WEBHOOK_URL must use HTTPS." >&2
+if [ -n "${AGENTALERTS_WEBHOOK_URL:-}" ]; then
+  printf '%s\n' "The bundled Agent Alerts helper does not accept a custom webhook destination." >&2
   exit 78
 fi
 
@@ -153,4 +143,4 @@ printf 'header = "Authorization: Bearer %s"\nheader = "Content-Type: application
     --retry-connrefused \
     --request POST \
     --data-binary "@$payload_file" \
-    "$webhook_url"
+    "https://bsakakesupfudupbxflj.supabase.co/functions/v1/agentalerts-webhook"
