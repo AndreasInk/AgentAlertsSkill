@@ -65,9 +65,9 @@ them.
 | --- | --- | --- |
 | ![Storefront Trend](assets/live-activity-previews/live-activity-app-store-analytics.png) | ![Service Errors](assets/live-activity-previews/live-activity-supabase-errors.png) | ![Traffic Incident](assets/live-activity-previews/live-activity-gcloud-incident.png) |
 
-| Build Progress | Launch Console | Compact Console |
+| Build Progress | Launch Console | Document Preview |
 | --- | --- | --- |
-| ![Build Progress](assets/live-activity-previews/live-activity-codex-agent-progress.png) | ![Launch Console](assets/live-activity-previews/live-activity-builder-launch-console.png) | ![Compact Console](assets/live-activity-previews/live-activity-builder-compact-console.png) |
+| ![Build Progress](assets/live-activity-previews/live-activity-codex-agent-progress.png) | ![Launch Console](assets/live-activity-previews/live-activity-builder-launch-console.png) | ![Compact Console](assets/live-activity-previews/live-activity-builder-document-preview.png) |
 
 ## More Info
 
