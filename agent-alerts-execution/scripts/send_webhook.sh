@@ -143,4 +143,4 @@ printf 'header = "Authorization: Bearer %s"\nheader = "Content-Type: application
     --retry-connrefused \
     --request POST \
     --data-binary "@$payload_file" \
-    "https://bsakakesupfudupbxflj.supabase.co/functions/v1/agentalerts-webhook"
+    "https://www.andreas.ink/api/agent"

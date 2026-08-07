@@ -25,6 +25,16 @@ expect_failure() {
 sh -n "$sender"
 "$sender" --check "$example" >/dev/null
 
+if ! grep -F 'https://www.andreas.ink/api/agent' "$sender" >/dev/null; then
+  printf '%s\n' "Agent Alerts helper must remain pinned to the first-party endpoint." >&2
+  exit 1
+fi
+
+if grep -E 'supabase\.co|github\.com/.*/(blob|raw)' "$sender" >/dev/null; then
+  printf '%s\n' "Agent Alerts helper must not expose an infrastructure or source URL." >&2
+  exit 1
+fi
+
 jq 'del(.idempotency_key)' "$example" >"$fixture_dir/missing-idempotency.json"
 expect_failure 65 "$sender" --check "$fixture_dir/missing-idempotency.json"
 
