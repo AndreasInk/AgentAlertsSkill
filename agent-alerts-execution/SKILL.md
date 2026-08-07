@@ -65,7 +65,7 @@ The helper:
 - reads `AGENTALERTS_AGENT_TOKEN` from the environment or safely parses the
   approved mode-`0600` `~/.config/agent-alerts/token.env` file;
 - sends only to the hosted Agent Alerts endpoint at
-  `bsakakesupfudupbxflj.supabase.co`;
+  `www.andreas.ink/api/agent`;
 - keeps the Bearer token out of process arguments;
 - sends the JSON with a matching `Idempotency-Key`; and
 - retries one transient failure with the unchanged payload.
@@ -75,7 +75,7 @@ credential handling, payload validation, and request behavior before
 authorizing it.
 
 The bundled public helper does not accept a custom webhook destination. This
-keeps the bearer token pinned to the reviewed Agent Alerts host.
+keeps the bearer token pinned to the reviewed first-party Agent Alerts host.
 
 For widgets, Control Widget state, builder layouts, or other advanced fields,
 use the configured full webhook contract with snake_case routing fields and a
