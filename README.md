@@ -57,17 +57,17 @@ them.
 
 ## Live Activity Examples
 
-| Ops Calm | Release Readiness | Mixpanel Funnel |
+| Ops Calm | Release Readiness | Conversion Trend |
 | --- | --- | --- |
-| ![Ops Calm](assets/live-activity-previews/live-activity-ops-calm.png) | ![Release Readiness](assets/live-activity-previews/live-activity-release-readiness.png) | ![Mixpanel Funnel](assets/live-activity-previews/live-activity-mixpanel-funnel.png) |
+| ![Ops Calm](assets/live-activity-previews/live-activity-ops-calm.png) | ![Release Readiness](assets/live-activity-previews/live-activity-release-readiness.png) | ![Conversion Trend](assets/live-activity-previews/live-activity-mixpanel-funnel.png) |
 
-| App Store Analytics | Supabase Errors | GCloud Incident |
+| Storefront Trend | Service Errors | Traffic Incident |
 | --- | --- | --- |
-| ![App Store Analytics](assets/live-activity-previews/live-activity-app-store-analytics.png) | ![Supabase Errors](assets/live-activity-previews/live-activity-supabase-errors.png) | ![GCloud Incident](assets/live-activity-previews/live-activity-gcloud-incident.png) |
+| ![Storefront Trend](assets/live-activity-previews/live-activity-app-store-analytics.png) | ![Service Errors](assets/live-activity-previews/live-activity-supabase-errors.png) | ![Traffic Incident](assets/live-activity-previews/live-activity-gcloud-incident.png) |
 
-| Codex Agent Progress | Builder Launch Console | Builder Compact Console |
+| Build Progress | Launch Console | Compact Console |
 | --- | --- | --- |
-| ![Codex Agent Progress](assets/live-activity-previews/live-activity-codex-agent-progress.png) | ![Builder Launch Console](assets/live-activity-previews/live-activity-builder-launch-console.png) | ![Builder Compact Console](assets/live-activity-previews/live-activity-builder-compact-console.png) |
+| ![Build Progress](assets/live-activity-previews/live-activity-codex-agent-progress.png) | ![Launch Console](assets/live-activity-previews/live-activity-builder-launch-console.png) | ![Compact Console](assets/live-activity-previews/live-activity-builder-compact-console.png) |
 
 ## More Info
 
